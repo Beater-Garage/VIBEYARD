@@ -17,6 +17,7 @@ int tubtempInt = 1023;
 // example:
 // SmoothThermistor smoothThermistor(A0,              // the analog pin to read from
 void setup() {
+  Seria.begin(9600);
   smoothThermistor.useAREF(false);
 }
 
