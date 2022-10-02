@@ -16,17 +16,13 @@
 
 
 //libraries
-#include "Tuyav.h"
+#include <Tuyav.h>
 #include "global.h"
 #include <SmoothThermistor.h>
 
 //selection of Serial port
-#if defined(ARDUINO_AVR_UNO)    //Arduino UNO board: use SoftwareSerial with pins you select, see https://www.arduino.cc/en/Reference/softwareSerial
 SoftwareSerial mySWserial(2, 3); //RX,TX (2 and 3 are recommended)
 Tuyav tuyav(&mySWserial);
-#else                           //Arduino Mega board: User can choose HardwareSerial: Serial1/Serial2/Serial3
-Tuyav tuyav(&Serial1);        //Serial1 is pin 18/19 on a Arduino Mega or pin TX1/RX0 on a Arduino Nano Every
-#endif
 
 //Initialize Time for updating Arbitrary Values
 unsigned long currentTime = 0;
@@ -40,7 +36,7 @@ SmoothThermistor smoothThermistor(A0,              // the analog pin to read fro
                                   4112,            // the beta coefficient of the thermistor
                                   25,              // the temperature for nominal resistance
                                   10);             // the number of samples to take for each measurement
-double TempMeasurement = smoothThermistor.temperature();
+float TempMeasurement = smoothThermistor.temperature();
 
 void setup()
 {
@@ -48,19 +44,10 @@ void setup()
   Serial.begin(9600);
   Serial.println("Tuya Demo program");
 
-  //if ArduinoMega or ArduinoNanoEvery, start Serial1
-#if defined(ARDUINO_AVR_UNO)
-#else
-  Serial1.begin(9600);
-#endif
-
   //define the TUYA pins
   // There are 3 digital inputs, 3 analog inputs, 5 digital output and 3 analog outputs available
   // If you do not use a pin, set the pin as PIN_UNUSED
-  tuyav.setDigitalInputs(PIN_UNUSED, PIN_UNUSED, PIN_UNUSED);                    //Set DigitalInputs
   tuyav.setAnalogInputs(A0, PIN_UNUSED, PIN_UNUSED);                  //Set AnalogInputs
-  tuyav.setDigitalOutputs(PIN_UNUSED, PIN_UNUSED, PIN_UNUSED, PIN_UNUSED, PIN_UNUSED);  //SetDigitalOutputs
-  tuyav.setAnalogOutputs(PIN_UNUSED, PIN_UNUSED, PIN_UNUSED);                  //Set AnalogOutputs (PWM digital pins)
 
   //init the chip
   tuyav.initialize();
@@ -78,34 +65,19 @@ void loop()
   if (currentTime - previousTime > updateDelay)
   {
     
-    Serial.print("Temperature = ");
-    Serial.println(TempMeasurement);
+    Serial.print(F("Temperature = "));
+    Serial.println(String(TempMeasurement));
     //set arbitrary values (9 are available - read only in the app)
     tuyav.setUserValue(AV1, "Temperature");
-      tuyav.setAV2(TempMeasurement);
-      tuyav.setAV3("V1.0");
-      String AV4msg = "Last update time:";
-      tuyav.setUserValue(AV4, AV4msg);
-      tuyav.setUserValue(AV5, String(currentTime - previousTime));
-      tuyav.setAV6("ms ago");
-      tuyav.setUserValue(AV7, "Time since boot:");
-      tuyav.setAV8(String(currentTime));
-      tuyav.setAV9("ms");
-
-      //check the state of a digital inputs (read only in the app)
-      Serial.print("State of DI2: "); Serial.println(tuyav.DIGITAL_IN[1]);
-      //check the state of a analog input (read only in the app)
-      int analogInCH2 = tuyav.ANALOG_IN[2];
-      Serial.print("State of AI3: "); Serial.println(analogInCH2);
-      //check the state of all digital outputs (can be set from the app)
-      for (int t = 0; t < 5; t++)
-      {
-        Serial.print("State of DO"); Serial.print(t + 1); Serial.print(": "); Serial.println(tuyav.DIGITAL_OUT[t]);
-      }
-      //check the state of a analog output (can be set from the app)
-      Serial.print("State of AO1: "); Serial.println(tuyav.ANALOG_OUT[0]);
-      Serial.println("----");
-
-      previousTime = millis();   //now that everything has been done, the previous time is the current time (and not the var currentTime, because time has passed during this block of code)
-    }
+    tuyav.setAV2(String(TempMeasurement));
+    tuyav.setAV3(F("V1.0"));
+    String AV4msg = "Last update time:";
+    tuyav.setUserValue(AV4, AV4msg);
+    tuyav.setUserValue(AV5, String(currentTime - previousTime));
+    tuyav.setAV6(F("ms ago"));
+    tuyav.setUserValue(AV7, "Time since boot:");
+    tuyav.setAV8(String(currentTime));
+    tuyav.setAV9(F("ms"));
+    previousTime = millis();   //now that everything has been done, the previous time is the current time (and not the var currentTime, because time has passed during this block of code)
+  }
 }
