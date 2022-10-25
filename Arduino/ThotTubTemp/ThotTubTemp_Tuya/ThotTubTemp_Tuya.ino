@@ -21,8 +21,7 @@
 #include <SmoothThermistor.h>
 
 //selection of Serial port
-SoftwareSerial mySWserial(2, 3); //RX,TX (2 and 3 are recommended)
-Tuyav tuyav(&mySWserial);
+Tuyav tuyav(&Serial);
 
 //Initialize Time for updating Arbitrary Values
 unsigned long currentTime = 0;
