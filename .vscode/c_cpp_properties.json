@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/Users/beater pc/Documents/Arduino/libraries/Tuyav/src",
-                "C:/Users/beater pc/Documents/Arduino/libraries/SmoothThermistor/src"
+                "C:/Users/beater pc/Documents/Arduino/libraries/SmoothThermistor/src",
+                "C:\\Users\\beater pc\\AppData\\Local\\Arduino15\\packages\\arduino\\**"
             ],
             "defines": [
                 "_DEBUG",
