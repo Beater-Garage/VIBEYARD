@@ -16,13 +16,20 @@
 
 
 //libraries
-#include <Tuyav.h>
+#include "Tuyav.h"
 #include "global.h"
 #include <SmoothThermistor.h>
 
 //selection of Serial port
-Tuyav tuyav(&Serial);
+#if defined(ARDUINO_AVR_UNO)    //Arduino UNO board: use SoftwareSerial with pins you select, see https://www.arduino.cc/en/Reference/softwareSerial
+SoftwareSerial mySWserial(2,3); //RX,TX (2 and 3 are recommended)
+Tuyav tuyav(&mySWserial);         
+#else                           //Arduino Mega board: User can choose HardwareSerial: Serial1/Serial2/Serial3
+  Tuyav tuyav(&Serial);        //Serial1 is pin 18/19 on a Arduino Mega
+#endif
 
+//Debug variable for any serial output
+int debug = FALSE;
 //Initialize Time for updating Arbitrary Values
 unsigned long currentTime = 0;
 unsigned long previousTime = 0;
@@ -35,18 +42,19 @@ SmoothThermistor smoothThermistor(A0,              // the analog pin to read fro
                                   4112,            // the beta coefficient of the thermistor
                                   25,              // the temperature for nominal resistance
                                   10);             // the number of samples to take for each measurement
-float TempMeasurement = smoothThermistor.temperature();
 
 void setup()
 {
   //start serial for debugging
   Serial.begin(9600);
-  Serial.println("Tuya Demo program");
+  if(debug){
+    Serial.println("Tuya Demo program");
+  }
 
   //define the TUYA pins
   // There are 3 digital inputs, 3 analog inputs, 5 digital output and 3 analog outputs available
   // If you do not use a pin, set the pin as PIN_UNUSED
-  tuyav.setAnalogInputs(A0, PIN_UNUSED, PIN_UNUSED);                  //Set AnalogInputs
+  //tuyav.setAnalogInputs(A0, PIN_UNUSED, PIN_UNUSED);                  //Set AnalogInputs
 
   //init the chip
   tuyav.initialize();
@@ -54,6 +62,7 @@ void setup()
 
 void loop()
 {
+  float TempMeasurement = smoothThermistor.temperature();
   //Should be called continuously
   tuyav.tuyaUpdate();
 
@@ -63,9 +72,10 @@ void loop()
   //timer: run the code below every time the updateDelay has passed
   if (currentTime - previousTime > updateDelay)
   {
-    
+    if(debug){
     Serial.print(F("Temperature = "));
-    Serial.println(String(TempMeasurement));
+    Serial.println(TempMeasurement);
+    }
     //set arbitrary values (9 are available - read only in the app)
     tuyav.setUserValue(AV1, "Temperature");
     tuyav.setAV2(String(TempMeasurement));
