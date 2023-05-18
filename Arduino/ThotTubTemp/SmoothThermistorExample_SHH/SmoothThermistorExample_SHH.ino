@@ -1,6 +1,8 @@
 // include the SmoothThermistor library
-#include <SmoothThermistor.h>
 #include <Tuyav.h>
+#include "global.h"
+#include <SmoothThermistor.h>
+
 
 //selection of Serial port
 #if defined(ARDUINO_AVR_UNO)    //Arduino UNO board: use SoftwareSerial with pins you select, see https://www.arduino.cc/en/Reference/softwareSerial
@@ -48,7 +50,11 @@ void loop() {
   }
   Serial.println(tubtempInt);
   tuyav.SendUserIntValue(116,tubtempInt);
-
+  String sw_msg = "Software Version:";
+  tuyav.setUserValue(AV4, sw_msg); 
+  // Put name of file here to make it easier to know what's running
+  String sw_ver = "SmoothThermistorExample_SHH";
+  tuyav.setUserValue(AV5, sw_ver);
   // pause for a second
   delay(1000);
 }
