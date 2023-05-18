@@ -1,6 +1,7 @@
 {
     "configuration": "cpu=atmega328old",
     "board": "arduino:avr:nano",
-    "port": "COM3",
-    "sketch": "Arduino\\ThotTubTemp\\SmoothThermistorExample_SHH\\SmoothThermistorExample_SHH.ino"
+    "port": "COM9",
+    "sketch": "Arduino\\ThotTubTemp\\SmoothThermistorExample_SHH\\SmoothThermistorExample_SHH.ino",
+    "programmer": "avrisp"
 }

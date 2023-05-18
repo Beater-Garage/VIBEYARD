@@ -51,9 +51,11 @@ void loop() {
   Serial.println(tubtempInt);
   tuyav.SendUserIntValue(116,tubtempInt);
   String sw_msg = "Software Version:";
+  Serial.println(sw_msg);
   tuyav.setUserValue(AV4, sw_msg); 
   // Put name of file here to make it easier to know what's running
   String sw_ver = "SmoothThermistorExample_SHH";
+  Serial.println(sw_ver);
   tuyav.setUserValue(AV5, sw_ver);
   // pause for a second
   delay(1000);
